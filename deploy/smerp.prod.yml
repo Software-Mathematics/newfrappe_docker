@@ -71,8 +71,7 @@ services:
           fi
         done;
         echo "sites/common_site_config.json found";
-        [[ -d sites/frontend ]] && echo "site 'frontend' already exists, skipping" || \
-        bench new-site --mariadb-user-host-login-scope='%' --db-root-username=root --db-root-password=admin --admin-password=admin --install-app erpnext --set-default frontend;
+        if [ -d sites/frontend ]; then echo "site 'frontend' already exists, skipping"; else bench new-site --mariadb-user-host-login-scope='%' --db-root-username=root --db-root-password=admin --admin-password=admin --install-app erpnext --set-default frontend; fi;
 
   db:
     image: mariadb:10.6
