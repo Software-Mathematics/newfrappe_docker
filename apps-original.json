@@ -1,0 +1,10 @@
+[
+  {
+    "url": "https://github.com/Software-Mathematics/SMERP.git",
+    "branch": "develop"
+  },
+  {
+    "url": "https://github.com/frappe/healthcare.git",
+    "branch": "version-15"
+  }
+]

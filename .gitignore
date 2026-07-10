@@ -32,3 +32,6 @@ node_modules
 # VitePress
 **/.vitepress/dist
 **/.vitepress/cache
+
+# SMERP build logs (large, throwaway build output)
+build*.log

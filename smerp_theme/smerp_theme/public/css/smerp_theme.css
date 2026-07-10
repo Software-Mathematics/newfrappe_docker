@@ -1,0 +1,314 @@
+/* ============================================================
+   SMERP Theme — HealthCareUI (Material Dashboard 2) look for the
+   ERPNext desk. Derived from Healthcare_PanelUI/src/assets/theme:
+     brand green   #039147   (info / gradient)
+     accent pink   #e91e63   (material primary)
+     background    #f0f2f5
+     headings      #344767
+     body text     #7b809a
+     font          Roboto
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+
+/* ---- Token overrides (light theme) ---- */
+:root {
+  --brand-green: #039147;
+  --brand-green-dark: #027a3c;
+  --brand-pink: #e91e63;
+
+  --font-stack: "Roboto", "Helvetica", "Arial", sans-serif;
+
+  --primary: var(--brand-green);
+  --primary-color: var(--brand-green);
+  --primary-light: #e6f4ec;
+  --btn-primary: var(--brand-green);
+
+  --bg-color: #f0f2f5;
+  --fg-color: #ffffff;
+  --card-bg: #ffffff;
+  --navbar-bg: #ffffff;
+  --control-bg: #f0f2f5;
+  --control-bg-on-gray: #ffffff;
+
+  --text-color: #344767;
+  --text-muted: #7b809a;
+  --heading-color: #344767;
+
+  --border-radius: 0.5rem;
+  --border-radius-md: 0.75rem;
+  --border-radius-lg: 1rem;
+  --border-color: #e6e9ef;
+
+  --shadow-sm: 0 2px 6px rgba(52, 71, 103, 0.08);
+  --card-shadow: 0 4px 14px rgba(52, 71, 103, 0.10);
+  --sidebar-select-color: var(--primary-light);
+}
+
+/* Keep the accent working in Frappe's dark theme too */
+[data-theme="dark"] {
+  --primary: #000;
+  --primary-color: #000;
+  --btn-primary: #000;
+  --primary-light: #123a29;
+  --sidebar-select-color: #123a29;
+}
+
+/* ---- Global type ---- */
+body,
+.app-listing,
+.page-body {
+  font-family: var(--font-stack);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4, h5, h6,
+.page-title, .title-text, .ellipsis {
+  color: var(--heading-color);
+  font-family: var(--font-stack);
+}
+
+/* ---- Top navbar: white with a subtle green hairline ---- */
+.navbar {
+  background: var(--navbar-bg) !important;
+  box-shadow: var(--shadow-sm);
+  border-bottom: 2px solid var(--primary);
+}
+.navbar .navbar-brand,
+.navbar .navbar-brand img { filter: none; }
+
+/* ---- Primary buttons: green, rounded, soft shadow (Material feel) ---- */
+.btn-primary,
+.btn-primary:focus {
+  background: var(--brand-green) !important;
+  border-color: var(--brand-green) !important;
+  color: #fff !important;
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 3px 8px rgba(3, 145, 71, 0.30);
+}
+.btn-primary:hover {
+  background: var(--brand-green-dark) !important;
+  border-color: var(--brand-green-dark) !important;
+  box-shadow: 0 5px 12px rgba(3, 145, 71, 0.38);
+}
+.btn {
+  border-radius: var(--border-radius-md);
+}
+
+/* ---- Cards / widgets / form sections: white, rounded, shadowed ---- */
+.widget,
+.form-section .section-body .form-column .frappe-control,
+.frappe-card,
+.dashboard-widget-box,
+.layout-main-section,
+.form-layout,
+.list-row-container,
+.page-card,
+.new-timeline .timeline-items {
+  background: var(--card-bg);
+}
+.widget,
+.frappe-card,
+.dashboard-widget-box,
+.layout-main-section,
+.form-layout {
+  border-radius: var(--border-radius-lg) !important;
+  box-shadow: var(--card-shadow) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+/* ---- Page background ---- */
+body[data-route],
+.main-section,
+.page-container {
+  background-color: var(--bg-color);
+}
+
+/* ---- Sidebar selected item: green tint ---- */
+.standard-sidebar-item.selected,
+.sidebar-item-container .desk-sidebar-item.selected {
+  background: var(--primary-light);
+  border-radius: var(--border-radius-md);
+}
+.standard-sidebar-item.selected a,
+.standard-sidebar-item.selected .sidebar-item-label {
+  color: var(--brand-green) !important;
+  font-weight: 600;
+}
+
+/* ---- Links & active accents ---- */
+a, .text-primary { color: var(--brand-green); }
+a:hover { color: var(--brand-green-dark); }
+
+/* ---- Inputs: rounded, light-grey field like the dashboard ---- */
+.form-control,
+.input-with-feedback,
+.like-disabled-input {
+  border-radius: var(--border-radius-md);
+  background-color: var(--control-bg);
+  border-color: var(--border-color);
+}
+.form-control:focus {
+  border-color: var(--brand-green);
+  box-shadow: 0 0 0 2px rgba(3, 145, 71, 0.15);
+}
+
+/* ---- Indicator / badge pills in the brand family where neutral ---- */
+.indicator-pill.green, .indicator.green { background: var(--primary-light); color: var(--brand-green); }
+
+/* ============================================================
+   Dark sidebar (Material Dashboard "dark" sidenav — Medharva admin look:
+   near-black gradient with green active accents)
+   ============================================================ */
+.desk-sidebar,
+.standard-sidebar,
+.layout-side-section .desk-sidebar {
+  background: linear-gradient(195deg, #42424a 0%, #232326 55%, #191919 100%) !important;
+  border-right: none !important;
+  box-shadow: 4px 0 18px rgba(0, 0, 0, 0.25);
+}
+
+/* section headers like "My Workspaces" / "Public" */
+.desk-sidebar .standard-sidebar-label,
+.standard-sidebar .standard-sidebar-label {
+  color: rgba(255, 255, 255, 0.65) !important;
+  letter-spacing: 0.04em;
+}
+
+/* items: white text + icons */
+.desk-sidebar .standard-sidebar-item,
+.desk-sidebar .sidebar-item-container,
+.desk-sidebar .sidebar-item-label,
+.desk-sidebar .item-anchor,
+.desk-sidebar a,
+.desk-sidebar .drop-icon,
+.desk-sidebar .sidebar-item-control {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+.desk-sidebar .sidebar-item-icon svg,
+.desk-sidebar .sidebar-item-icon use,
+.desk-sidebar .drop-icon svg {
+  stroke: rgba(255, 255, 255, 0.92) !important;
+  fill: rgba(255, 255, 255, 0.92) !important;
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+/* hover + selected: translucent white pill */
+.desk-sidebar .standard-sidebar-item {
+  border-radius: 0.6rem;
+  margin: 2px 8px;
+  transition: background 0.15s ease;
+}
+.desk-sidebar .standard-sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.10) !important;
+}
+/* active item: green gradient pill (Material sidenavColor="info") */
+.desk-sidebar .standard-sidebar-item.selected {
+  background: linear-gradient(195deg, #06a552, #039147) !important;
+  box-shadow: 0 3px 8px rgba(3, 145, 71, 0.4);
+}
+.desk-sidebar .standard-sidebar-item.selected .sidebar-item-label,
+.desk-sidebar .standard-sidebar-item.selected a {
+  color: #ffffff !important;
+  font-weight: 600;
+}
+.desk-sidebar .standard-sidebar-item.selected .sidebar-item-icon svg,
+.desk-sidebar .standard-sidebar-item.selected .sidebar-item-icon use {
+  stroke: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* ============================================================
+   Login page — HealthCareUI look: branded backdrop + elevated card
+   ============================================================ */
+.for-login,
+body.for-login,
+.for-login .page-container {
+  background: linear-gradient(135deg, #2b2b30 0%, #232326 45%, #141416 100%) !important;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+/* soft radial highlight over the gradient */
+.for-login::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(1100px 600px at 80% -10%, rgba(255, 255, 255, 0.18), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(233, 30, 99, 0.12), transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+.for-login .login-content {
+  position: relative;
+  z-index: 1;
+}
+.for-login .page-card {
+  border-radius: 1.25rem !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 2.2rem 2rem !important;
+  max-width: 420px;
+  background: rgba(28, 28, 32, 0.92) !important;
+  backdrop-filter: blur(8px);
+}
+.for-login .page-card-head {
+  text-align: center;
+}
+/* "Login to Healthcare" heading (and sub-text) in white */
+.for-login .page-card-head .indicator,
+.for-login .page-card-head h4,
+.for-login .page-card-head h3,
+.for-login .page-card-head {
+  color: #ffffff !important;
+  font-family: var(--font-stack);
+  font-weight: 700;
+}
+/* field labels + helper text readable on the dark card */
+.for-login .page-card label,
+.for-login .control-label,
+.for-login .page-card .text-muted {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+.for-login .page-card-head img {
+  max-height: 48px;
+  margin-bottom: 0.5rem;
+}
+.for-login .form-control {
+  border-radius: 0.7rem;
+  padding: 0.7rem 0.9rem;
+  background: #f0f2f5;
+  border: 1px solid #e6e9ef;
+}
+.for-login .form-control:focus {
+  border-color: var(--brand-green);
+  box-shadow: 0 0 0 3px rgba(3, 145, 71, 0.16);
+  background: #fff;
+}
+.for-login .btn-login,
+.for-login .btn-primary {
+  background: linear-gradient(180deg, #000, #000) !important;
+  border: none !important;
+  color: #fff !important;
+  width: 100%;
+  border-radius: 0.7rem;
+  padding: 0.65rem 1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  box-shadow: 0 6px 16px rgba(3, 145, 71, 0.35);
+}
+.for-login .btn-login:hover,
+.for-login .btn-primary:hover {
+  background: linear-gradient(180deg, #000, #000) !important;
+}
+.for-login a { color: var(--brand-green); }
+.for-login a:hover { color: #026e36; }
+
+/* ---- Medharva logo sizing (navbar brand + login card) ---- */
+.navbar .navbar-brand img,
+.navbar img.app-logo { height: 30px !important; width: auto !important; }
+.for-login .page-card-head img.app-logo,
+.for-login img.app-logo { max-height: 64px !important; width: auto !important; margin-bottom: 0.4rem; }
+
+/* ---- Website / web-form pages ---- */
+.web-form-container .btn-primary { background: var(--brand-green) !important; border-color: var(--brand-green) !important; }
+.page_content, .web-page-content { font-family: var(--font-stack); }
