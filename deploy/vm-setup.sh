@@ -32,6 +32,13 @@ fi
 systemctl enable --now docker
 systemctl enable --now nginx
 
+# let the sudo user (e.g. devops) run docker without sudo in NEW sessions
+DEPLOY_USER="${SUDO_USER:-$(logname 2>/dev/null || echo "$USER")}"
+if [ -n "$DEPLOY_USER" ] && [ "$DEPLOY_USER" != "root" ]; then
+  usermod -aG docker "$DEPLOY_USER"
+  echo ">> added '$DEPLOY_USER' to the docker group (effective on next login)"
+fi
+
 echo ">> [3/4] Firewall (open 22/80/443 if ufw is in use)"
 if command -v ufw >/dev/null 2>&1; then
   ufw allow 22/tcp  || true
