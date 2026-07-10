@@ -1,0 +1,5 @@
+# Shell scripts and deploy configs must stay LF — they run on Linux.
+# (CRLF here is what fix-crlf.Dockerfile had to strip; avoid it at the source.)
+*.sh            text eol=lf
+deploy/**       text eol=lf
+*.Dockerfile    text eol=lf
