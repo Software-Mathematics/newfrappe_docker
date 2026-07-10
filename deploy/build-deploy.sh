@@ -65,11 +65,14 @@ $SUDO ln -sf /etc/nginx/sites-available/erp.softwaremathematics.com.conf \
              /etc/nginx/sites-enabled/erp.softwaremathematics.com.conf
 $SUDO nginx -t
 $SUDO systemctl reload nginx
-if ! $SUDO test -d "/etc/letsencrypt/live/$DOMAIN"; then
-  $SUDO certbot --nginx -d "$DOMAIN" --non-interactive --agree-tos \
-        -m admin@softwaremathematics.com --redirect
-else
+if $SUDO test -d "/etc/letsencrypt/live/$DOMAIN"; then
   echo "   certificate already present for $DOMAIN"
+elif $SUDO certbot --nginx -d "$DOMAIN" --non-interactive --agree-tos \
+        -m admin@softwaremathematics.com --redirect; then
+  echo "   certbot issued a certificate for $DOMAIN"
+else
+  echo "   WARNING: certbot could not issue a cert (domain proxied via Cloudflare?)." >&2
+  echo "   Stack is up on :8080 (HTTP). Handle TLS at Cloudflare or grey-cloud + re-run." >&2
 fi
 
-echo ">> Done. SMERP is live at https://$DOMAIN"
+echo ">> Done. SMERP backend is up. Public URL: https://$DOMAIN (via your edge/TLS)"
