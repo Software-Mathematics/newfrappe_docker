@@ -6,7 +6,7 @@
 # Deployed by deploy.sh:  SMERP_IMAGE=... docker compose -f smerp.prod.yml -p smerp up -d
 services:
   backend:
-    image: ${SMERP_IMAGE:-nexus.softwaremathematics.com/smerp:latest}
+    image: ${SMERP_IMAGE:-smerp:latest}
     networks: [frappe_network]
     deploy:
       restart_policy: { condition: on-failure }
@@ -20,7 +20,7 @@ services:
       MARIADB_ROOT_PASSWORD: admin
 
   configurator:
-    image: ${SMERP_IMAGE:-nexus.softwaremathematics.com/smerp:latest}
+    image: ${SMERP_IMAGE:-smerp:latest}
     networks: [frappe_network]
     deploy:
       restart_policy: { condition: none }
@@ -45,7 +45,7 @@ services:
       - logs:/home/frappe/frappe-bench/logs
 
   create-site:
-    image: ${SMERP_IMAGE:-nexus.softwaremathematics.com/smerp:latest}
+    image: ${SMERP_IMAGE:-smerp:latest}
     networks: [frappe_network]
     deploy:
       restart_policy: { condition: none }
@@ -96,7 +96,7 @@ services:
       - db-data:/var/lib/mysql
 
   frontend:
-    image: ${SMERP_IMAGE:-nexus.softwaremathematics.com/smerp:latest}
+    image: ${SMERP_IMAGE:-smerp:latest}
     networks: [frappe_network]
     depends_on: [websocket]
     deploy:
@@ -119,7 +119,7 @@ services:
       - "127.0.0.1:8080:8080"
 
   queue-long:
-    image: ${SMERP_IMAGE:-nexus.softwaremathematics.com/smerp:latest}
+    image: ${SMERP_IMAGE:-smerp:latest}
     networks: [frappe_network]
     deploy:
       restart_policy: { condition: on-failure }
@@ -132,7 +132,7 @@ services:
       FRAPPE_REDIS_QUEUE: redis://redis-queue:6379
 
   queue-short:
-    image: ${SMERP_IMAGE:-nexus.softwaremathematics.com/smerp:latest}
+    image: ${SMERP_IMAGE:-smerp:latest}
     networks: [frappe_network]
     deploy:
       restart_policy: { condition: on-failure }
@@ -159,7 +159,7 @@ services:
       restart_policy: { condition: on-failure }
 
   scheduler:
-    image: ${SMERP_IMAGE:-nexus.softwaremathematics.com/smerp:latest}
+    image: ${SMERP_IMAGE:-smerp:latest}
     networks: [frappe_network]
     deploy:
       restart_policy: { condition: on-failure }
@@ -169,7 +169,7 @@ services:
       - logs:/home/frappe/frappe-bench/logs
 
   websocket:
-    image: ${SMERP_IMAGE:-nexus.softwaremathematics.com/smerp:latest}
+    image: ${SMERP_IMAGE:-smerp:latest}
     networks: [frappe_network]
     deploy:
       restart_policy: { condition: on-failure }
