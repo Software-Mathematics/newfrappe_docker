@@ -44,12 +44,32 @@ cd deploy
 export SMERP_IMAGE="$IMAGE"
 dc up -d
 
-echo ">> [4/5] Waiting for site 'frontend' and ensuring apps"
-for i in $(seq 1 60); do
+echo ">> [4/5] Waiting for create-site to finish (first run installs erpnext; can take 10-20 min)"
+CS_ID=$(dc ps -aq create-site 2>/dev/null | head -1)
+if [ -n "$CS_ID" ]; then
+  for i in $(seq 1 240); do          # up to ~40 min
+    st=$(d inspect -f '{{.State.Status}}' "$CS_ID" 2>/dev/null || echo unknown)
+    if [ "$st" = "exited" ]; then
+      code=$(d inspect -f '{{.State.ExitCode}}' "$CS_ID" 2>/dev/null || echo 1)
+      [ "$code" = "0" ] && { echo "   create-site completed"; break; }
+      echo "   create-site FAILED (exit $code) — recent logs:"; dc logs --tail 60 create-site || true
+      exit 1
+    fi
+    sleep 10
+    if [ "$i" -eq 240 ]; then
+      echo "   create-site still running after 40 min — recent logs:"; dc logs --tail 60 create-site || true
+      exit 1
+    fi
+  done
+fi
+
+echo ">> Confirming the site is reachable from backend"
+for i in $(seq 1 24); do
   dc exec -T backend bench --site frontend list-apps >/dev/null 2>&1 && break
   sleep 5
-  [ "$i" -eq 60 ] && { echo "site did not come up in time"; exit 1; }
 done
+
+echo ">> Ensuring extra apps installed (healthcare, smerp_theme)"
 installed=$(dc exec -T backend bench --site frontend list-apps 2>/dev/null || true)
 for app in healthcare smerp_theme; do
   if ! grep -qw "$app" <<<"$installed"; then
