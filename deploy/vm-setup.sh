@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
-# One-time provisioning for the SMERP VM (Debian/Ubuntu).
+# One-time provisioning for a SMERP VM (Debian/Ubuntu).
 # Installs Docker Engine + Compose plugin, git, nginx, certbot, and opens
 # ports 80/443/22. Run ONCE as root on the target VM:
-#   bash vm-setup.sh
+#   DOMAIN=erp.medharva.com bash vm-setup.sh
 #
-# DNS is NOT handled here — create an A record at your DNS provider:
-#   erp.softwaremathematics.com  ->  79.143.176.226
+# DNS is NOT handled here — create an A record at your DNS provider pointing
+# the domain at this VM's public IP, e.g.
+#   erp.softwaremathematics.com -> 79.143.176.226
+#   erp.medharva.com            -> 169.58.105.60
 set -euo pipefail
+
+DOMAIN="${DOMAIN:-<your-domain>}"
 
 if [ "$(id -u)" -ne 0 ]; then
   echo "Please run as root (or: sudo bash vm-setup.sh)"; exit 1
@@ -55,4 +59,4 @@ certbot --version || true
 
 echo ""
 echo "VM provisioning complete."
-echo "Remaining manual step: point DNS  erp.softwaremathematics.com -> 79.143.176.226"
+echo "Remaining manual step: point DNS  $DOMAIN -> $(curl -fsS --max-time 5 https://api.ipify.org 2>/dev/null || echo '<this VM public IP>')"

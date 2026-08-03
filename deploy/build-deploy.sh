@@ -1,16 +1,26 @@
 #!/usr/bin/env bash
 # Build the SMERP image on THIS host (needs a real Docker daemon) and (re)deploy
 # the compose stack behind host nginx + certbot TLS. This is the RUNBOOK build,
-# automated — the Jenkins 'smerp' job runs it over SSH on the target VM.
+# automated — the Jenkins 'smerp'/'medharva-erp' jobs run it over SSH on their
+# target VM.
+#
+# Everything host-specific comes from the environment, so the same script serves
+# every SMERP deployment (erp.softwaremathematics.com, erp.medharva.com, ...).
 #
 # Run from the frappe_docker repo root on the VM:
-#   FRAPPE_BRANCH=version-15 DOMAIN=erp.softwaremathematics.com \
-#   CACHE_BUST=$(date +%s) bash deploy/build-deploy.sh
+#   FRAPPE_BRANCH=version-15 DOMAIN=erp.medharva.com \
+#   CERTBOT_EMAIL=admin@medharva.com CACHE_BUST=$(date +%s) \
+#   bash deploy/build-deploy.sh
 set -euo pipefail
 
 FRAPPE_BRANCH="${FRAPPE_BRANCH:-version-15}"
 DOMAIN="${DOMAIN:?DOMAIN is required}"
 CACHE_BUST="${CACHE_BUST:-$(date +%s)}"
+CERTBOT_EMAIL="${CERTBOT_EMAIL:-admin@softwaremathematics.com}"
+COMPOSE_PROJECT="${COMPOSE_PROJECT:-smerp}"
+# host loopback port the frontend container is published on (host nginx target)
+HTTP_BIND_PORT="${HTTP_BIND_PORT:-8080}"
+export HTTP_BIND_PORT
 IMAGE="smerp:latest"
 
 # Non-root sudo user (e.g. devops): use sudo for docker if the daemon isn't
@@ -26,7 +36,7 @@ d() {
   if [ "$USE_SUDO" = "1" ]; then sudo DOCKER_BUILDKIT=1 docker "$@"
   else DOCKER_BUILDKIT=1 docker "$@"; fi
 }
-dc() { d compose -f smerp.prod.yml -p smerp "$@"; }
+dc() { d compose -f smerp.prod.yml -p "$COMPOSE_PROJECT" "$@"; }
 
 echo ">> [1/5] Building base image ($IMAGE) on frappe $FRAPPE_BRANCH"
 d build \
@@ -80,19 +90,26 @@ done
 dc exec -T backend bench --site frontend migrate || true
 
 echo ">> [5/5] Configuring host nginx + TLS for $DOMAIN"
-$SUDO cp nginx/erp.softwaremathematics.com.conf /etc/nginx/sites-available/erp.softwaremathematics.com.conf
-$SUDO ln -sf /etc/nginx/sites-available/erp.softwaremathematics.com.conf \
-             /etc/nginx/sites-enabled/erp.softwaremathematics.com.conf
+NGINX_AVAILABLE="/etc/nginx/sites-available/$DOMAIN.conf"
+# Render the vhost only on first deploy: certbot edits this file in place to add
+# the :443 server block, and overwriting it on every redeploy would drop TLS.
+if $SUDO test -f "$NGINX_AVAILABLE"; then
+  echo "   vhost $NGINX_AVAILABLE already exists, leaving it untouched"
+else
+  sed -e "s/__DOMAIN__/$DOMAIN/g" -e "s/__BIND_PORT__/$HTTP_BIND_PORT/g" \
+      nginx/smerp.conf.template | $SUDO tee "$NGINX_AVAILABLE" >/dev/null
+fi
+$SUDO ln -sf "$NGINX_AVAILABLE" "/etc/nginx/sites-enabled/$DOMAIN.conf"
 $SUDO nginx -t
 $SUDO systemctl reload nginx
 if $SUDO test -d "/etc/letsencrypt/live/$DOMAIN"; then
   echo "   certificate already present for $DOMAIN"
 elif $SUDO certbot --nginx -d "$DOMAIN" --non-interactive --agree-tos \
-        -m admin@softwaremathematics.com --redirect; then
+        -m "$CERTBOT_EMAIL" --redirect; then
   echo "   certbot issued a certificate for $DOMAIN"
 else
   echo "   WARNING: certbot could not issue a cert (domain proxied via Cloudflare?)." >&2
-  echo "   Stack is up on :8080 (HTTP). Handle TLS at Cloudflare or grey-cloud + re-run." >&2
+  echo "   Stack is up on :$HTTP_BIND_PORT (HTTP). Handle TLS at Cloudflare or grey-cloud + re-run." >&2
 fi
 
 echo ">> Done. SMERP backend is up. Public URL: https://$DOMAIN (via your edge/TLS)"
